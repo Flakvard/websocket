@@ -1,24 +1,29 @@
-var express = require('express');
-var app = express();
-var socket = require('socket.io')
-var Connection = require('../common/connection.js')
+const app = require('express')();
+const httpServer = require('http').createServer(app);
+const io = require("socket.io")(httpServer, {
+    cors: {
+      origin: "http://localhost:4200",
+      methods: ["GET", "POST"],
+      allowedHeaders: ["my-custom-header"],
+      credentials: true
+    }
+  });
 
-var server = app.listen(3000, () => {
+const Connection = require('../common/connection.js')
+
+
+const server = httpServer.listen(3000, () => {
     console.log('Example app listening on port 3000!');
 });
 
-var socketIO = socket(server);
-
-socketIO.on('connection', (socket)=> {
+io.on('connection', (socket) => {
     console.log('A connection has been created with ' + socket.id)
-
+  
     socket.on(Connection.change, (changes) => {
-        console.log('Changes are: ' + changes);
-        socketIO.sockets.emit(Connection.change, changes);
+      socket.broadcast.emit(Connection.change, changes);
     });
-
-    socket.on(Connection.create, (newData) => {
-        console.log('Changes are: ' + newData);
-        socketIO.sockets.emit(Connection.create, newData);
+  
+    socket.on(Connection.create, (create) => {
+      socket.broadcast.emit(Connection.create, create);
     });
 });

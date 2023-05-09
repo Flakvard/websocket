@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import * as Connection from '../../../common/connection.js'
+import * as Connection from '../../../common/connection'
 import { User } from '../../../common/user';
 import { Observable } from 'rxjs';
 import { io, Socket } from 'socket.io-client';
@@ -14,7 +14,12 @@ readonly backendUrl = 'http://localhost:3000';
   private clientSocket: Socket;
   constructor() { 
     console.log('Creating socket and connecting to server...');
-    this.clientSocket = io(this.backendUrl);
+    this.clientSocket = io(this.backendUrl, {
+      withCredentials: true,
+      extraHeaders: {
+        "my-custom-header": "abcd"
+      }
+    });
   }
   listenToServer(connection: Connection): Observable<any> {
     console.log(`Listening to server for ${connection}...`);

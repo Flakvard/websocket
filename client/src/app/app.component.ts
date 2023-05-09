@@ -10,7 +10,6 @@ import { User } from '../../../common/user';
 export class AppComponent {
 
   user: User[] = [];
-  users: User[] = [];
   label: string = '';
 
   constructor(private socketService: SocketIoService) {
